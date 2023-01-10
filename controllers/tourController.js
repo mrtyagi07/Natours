@@ -3,9 +3,24 @@ const Tour = require('../models/tourModel');
 //! Route Handlers
 exports.getAllTours = async (req, res) => {
   try {
-    console.log(req.query);
-    const tours = await Tour.find();
+    //! Build query
 
+    const queryObj = { ...req.query };
+    const excludeFields = ['page', 'sort', 'limit', 'fields'];
+    excludeFields.forEach((el) => delete queryObj[el]);
+
+    const query = Tour.find(queryObj);
+
+    // const query = Tour.find()
+    //   .where('duration')
+    //   .equals(5)
+    //   .where('difficulty')
+    //   .equals('easy');
+
+    //! Execute query
+    const tours = await query;
+
+    //! Send reponse
     res.status(200).json({
       status: 'success',
       results: tours.length,
